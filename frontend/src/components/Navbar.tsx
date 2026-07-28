@@ -33,7 +33,7 @@ export default function Navbar() {
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Expenses & Revenue', href: '/expenses', icon: Receipt },
     { name: 'General Ledger', href: '/ledgers', icon: BookOpen },
-    { name: 'Reports & Audit ⭐', href: '/reports', icon: BarChart3, badge: 'AI Audit' },
+    { name: 'Reports & Audit', href: '/reports', icon: BarChart3, badge: 'AI Audit' },
   ];
 
   return (

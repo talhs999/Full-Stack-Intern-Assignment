@@ -196,7 +196,7 @@ Selecting the right agentic framework is one of the most consequential architect
 
 ### Framework Comparison Summary
 
-| Criterion | OpenAI Agents SDK | LangGraph | CrewAI | PydanticAI ✅ |
+| Criterion | OpenAI Agents SDK | LangGraph | CrewAI | PydanticAI (Selected) |
 |-----------|------------------|-----------|--------|--------------|
 | Type Safety | Medium | Low | Low | **High** |
 | Pydantic Integration | Medium | Medium | Low | **Native** |
@@ -245,12 +245,12 @@ All three models will be supported via our `.env` configuration, with Gemini as 
 
 | Criterion | Gemini 2.0 Flash | Claude 3.5 Sonnet | GPT-4o Mini |
 |-----------|-----------------|-------------------|-------------|
-| Tool-Calling Accuracy | ★★★★☆ | ★★★★★ | ★★★★☆ |
-| Latency | ★★★★★ | ★★★☆☆ | ★★★★☆ |
-| Cost | ★★★★★ | ★★☆☆☆ | ★★★★☆ |
+| Tool-Calling Accuracy | High (4/5) | Very High (5/5) | High (4/5) |
+| Latency | Very Low (5/5) | Moderate (3/5) | Low (4/5) |
+| Cost Efficiency | Very High (5/5) | Moderate (2/5) | High (4/5) |
 | Context Window | 1M tokens | 200K tokens | 128K tokens |
 | Free Tier | Yes | No | Limited |
-| Our Choice | ✅ Primary | Secondary | Tertiary |
+| Our Choice | Selected (Primary) | Secondary | Tertiary |
 
 ---
 

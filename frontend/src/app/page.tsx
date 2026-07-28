@@ -109,7 +109,7 @@ export default function DashboardPage() {
         <StatCard
           title="Net Profit Margin"
           value={`PKR ${(pnl?.net_profit || 0).toLocaleString()}`}
-          subtitle={(pnl?.net_profit || 0) >= 0 ? 'Surplus ✅' : 'Deficit ❌'}
+          subtitle={(pnl?.net_profit || 0) >= 0 ? 'Surplus (Positive)' : 'Deficit (Negative)'}
           icon={PieChart}
           colorScheme="gold"
         />
@@ -172,7 +172,7 @@ export default function DashboardPage() {
             </div>
             <div className="p-3 rounded-2xl bg-slate-900/60 border border-white/5 text-center">
               <p className="text-[11px] text-slate-400">Audit Status</p>
-              <p className="text-sm font-bold text-cyan-300">All Scanned ⭐</p>
+              <p className="text-sm font-bold text-cyan-300">All Scanned</p>
             </div>
           </div>
         </div>
