@@ -172,8 +172,8 @@ def generate_pdf_statement_bytes(
         ledger_rows.append([
             Paragraph(str(tx.date), cell_style),
             Paragraph(f"<font color='{type_color}'><b>{tx.type.upper()}</b></font>", cell_style),
-            Paragraph(tx.category_name or "N/A", cell_style),
-            Paragraph(tx.account_name or "N/A", cell_style),
+            Paragraph(tx.category.name if getattr(tx, "category", None) else "N/A", cell_style),
+            Paragraph(tx.account.name if getattr(tx, "account", None) else "N/A", cell_style),
             Paragraph(f"{tx.amount:,.2f}", cell_style_right),
             Paragraph(tx.description or "", cell_style)
         ])
@@ -254,8 +254,8 @@ def generate_csv_statement_string(
             tx.id,
             str(tx.date),
             tx.type.upper(),
-            tx.category_name or "N/A",
-            tx.account_name or "N/A",
+            tx.category.name if getattr(tx, "category", None) else "N/A",
+            tx.account.name if getattr(tx, "account", None) else "N/A",
             f"{tx.amount:.2f}",
             tx.description or ""
         ])

@@ -66,6 +66,18 @@ async def test_ai_chat_fallback():
 @pytest.mark.asyncio
 async def test_download_pdf_statement():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        cats_res = await client.get("/api/v1/categories")
+        cat_id = cats_res.json()["data"][0]["id"]
+        accts_res = await client.get("/api/v1/accounts")
+        acct_id = accts_res.json()["data"][0]["id"]
+        await client.post("/api/v1/transactions", json={
+            "date": "2026-07-28",
+            "amount": 50000,
+            "type": "expense",
+            "description": "Office rent payment",
+            "account_id": acct_id,
+            "category_id": cat_id
+        })
         res = await client.get("/api/v1/reports/statement/pdf?period=month")
         assert res.status_code == 200
         assert res.headers["content-type"] == "application/pdf"
@@ -74,10 +86,23 @@ async def test_download_pdf_statement():
 @pytest.mark.asyncio
 async def test_download_csv_statement():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        cats_res = await client.get("/api/v1/categories")
+        cat_id = cats_res.json()["data"][0]["id"]
+        accts_res = await client.get("/api/v1/accounts")
+        acct_id = accts_res.json()["data"][0]["id"]
+        await client.post("/api/v1/transactions", json={
+            "date": "2026-07-28",
+            "amount": 50000,
+            "type": "expense",
+            "description": "Office rent payment",
+            "account_id": acct_id,
+            "category_id": cat_id
+        })
         res = await client.get("/api/v1/reports/statement/csv?period=all")
         assert res.status_code == 200
         assert res.headers["content-type"] == "text/csv; charset=utf-8" or "text/csv" in res.headers["content-type"]
         assert "EXECUTIVE SUMMARY" in res.text
+        assert "50000.00" in res.text
 
 @pytest.mark.asyncio
 async def test_complete_report_query():
