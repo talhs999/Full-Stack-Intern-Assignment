@@ -3,10 +3,31 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Receipt, BookOpen, BarChart3, ShieldAlert, Sparkles, Building2 } from 'lucide-react';
+import { LayoutDashboard, Receipt, BookOpen, BarChart3, ShieldAlert, Sparkles, Building2, Sun, Moon } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [isLight, setIsLight] = React.useState(false);
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+      document.body.classList.add('light-mode');
+      setIsLight(true);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const nextMode = !isLight;
+    setIsLight(nextMode);
+    if (nextMode) {
+      document.body.classList.add('light-mode');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.body.classList.remove('light-mode');
+      localStorage.setItem('theme', 'dark');
+    }
+  };
 
   const navItems = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -59,11 +80,20 @@ export default function Navbar() {
         </nav>
 
         {/* Right Status / Action */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <span>Supabase Ledger Active</span>
           </div>
+          
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle Light / Dark Mode"
+            title={isLight ? "Switch to Obsidian Dark Mode" : "Switch to Pearl Light Mode"}
+            className="p-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center text-slate-300 hover:text-cyan-400 shadow-sm cursor-pointer"
+          >
+            {isLight ? <Moon className="w-4 h-4 text-slate-800" /> : <Sun className="w-4 h-4 text-amber-400 animate-spin-slow" />}
+          </button>
         </div>
       </div>
     </header>

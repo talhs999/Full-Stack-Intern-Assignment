@@ -2,9 +2,9 @@
 
 @layer base {
   :root {
-    --bg-root: #090D16;
-    --card-bg: rgba(18, 26, 43, 0.65);
-    --card-border: rgba(255, 255, 255, 0.08);
+    --bg-root: #080A0F;
+    --card-bg: rgba(15, 20, 32, 0.70);
+    --card-border: rgba(255, 255, 255, 0.12);
     --text-main: #F8FAFC;
     --text-muted: #94A3B8;
     --accent-cyan: #00F2FE;
@@ -19,37 +19,121 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     min-height: 100vh;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 }
 
-/* Glassmorphism Classes */
+/* Glassmorphism Classes (Dark Mode Default: Obsidian Black & Silver) */
 .glass-card {
   background: var(--card-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--card-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(0, 242, 254, 0.3);
-  box-shadow: 0 12px 40px 0 rgba(0, 242, 254, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 40px 0 rgba(0, 242, 254, 0.15);
   transform: translateY(-2px);
 }
 
 .glass-panel {
-  background: rgba(13, 19, 33, 0.85);
+  background: rgba(10, 14, 23, 0.85);
   backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Gradient Background Mesh */
 .bg-mesh {
   background-image: 
-    radial-gradient(at 10% 20%, rgba(0, 242, 254, 0.15) 0px, transparent 50%),
-    radial-gradient(at 90% 80%, rgba(79, 172, 254, 0.12) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(255, 8, 68, 0.08) 0px, transparent 60%);
+    radial-gradient(at 10% 20%, rgba(255, 255, 255, 0.08) 0px, transparent 50%),
+    radial-gradient(at 90% 80%, rgba(0, 242, 254, 0.10) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(79, 172, 254, 0.08) 0px, transparent 60%);
+}
+
+/* --- LIGHT MODE OVERRIDES (Platinum White & Black Glassmorphism) --- */
+body.light-mode {
+  --bg-root: #F1F5F9;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(15, 23, 42, 0.15);
+  --text-main: #0F172A;
+  --text-muted: #475569;
+}
+
+body.light-mode .text-white {
+  color: #0F172A !important;
+}
+
+body.light-mode .text-slate-200,
+body.light-mode .text-slate-300 {
+  color: #1E293B !important;
+}
+
+body.light-mode .text-slate-400 {
+  color: #475569 !important;
+}
+
+body.light-mode .text-slate-500 {
+  color: #64748B !important;
+}
+
+body.light-mode .bg-slate-900\/60,
+body.light-mode .bg-slate-900\/50,
+body.light-mode .bg-slate-900\/80,
+body.light-mode .bg-slate-900\/40,
+body.light-mode .bg-slate-950,
+body.light-mode .bg-slate-900 {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  color: #0F172A !important;
+}
+
+body.light-mode .border-white\/10,
+body.light-mode .border-white\/5,
+body.light-mode .border-white\/20,
+body.light-mode .border-white\/30 {
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+body.light-mode .glass-panel {
+  background: rgba(255, 255, 255, 0.90) !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .glass-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .glass-card:hover {
+  border-color: rgba(2, 132, 199, 0.3) !important;
+  box-shadow: 0 12px 35px rgba(2, 132, 199, 0.12) !important;
+}
+
+body.light-mode .bg-mesh {
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(15, 23, 42, 0.05) 0px, transparent 50%),
+    radial-gradient(at 90% 80%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(37, 99, 235, 0.05) 0px, transparent 60%) !important;
+}
+
+body.light-mode input,
+body.light-mode select,
+body.light-mode textarea {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #0F172A !important;
+  border-color: rgba(15, 23, 42, 0.25) !important;
+}
+
+body.light-mode table thead tr {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+}
+
+body.light-mode table tbody tr:hover {
+  background-color: rgba(241, 245, 249, 0.6) !important;
 }
 
 /* Custom Scrollbar */
@@ -59,11 +143,11 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #090D16;
+  background: var(--bg-root);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(150, 150, 150, 0.25);
   border-radius: 4px;
 }
 
