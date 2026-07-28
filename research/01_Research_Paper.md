@@ -261,44 +261,44 @@ All three models will be supported via our `.env` configuration, with Gemini as 
 The system adopts a **three-tier architecture** enhanced with an AI agent layer:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    PRESENTATION TIER                        │
-│          Next.js 14 + TypeScript (App Router)               │
-│    Dark Mode | Glassmorphism | Micro-Animations | Charts     │
-│         AI Chat Drawer | Dashboard | Reports                 │
-└────────────────────────┬────────────────────────────────────┘
-                         │ HTTPS REST API (JSON)
-┌────────────────────────▼────────────────────────────────────┐
-│                     LOGIC TIER                              │
-│              FastAPI (Python, managed by uv)                │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │                  AI Agent Layer                      │   │
-│  │  PydanticAI Agent + Tool Definitions                 │   │
-│  │  → create_transaction  → list_transactions           │   │
-│  │  → generate_pnl        → generate_balance_sheet      │   │
-│  │  → run_monthly_audit   → summarize_spending          │   │
-│  └──────────────────────────────────────────────────────┘   │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │              REST API Endpoints                      │   │
-│  │  /api/v1/transactions  /api/v1/reports               │   │
-│  │  /api/v1/audit         /api/v1/agent/chat            │   │
-│  └──────────────────────────────────────────────────────┘   │
-│  Pydantic Schemas | SQLAlchemy Async ORM | Alembic           │
-└────────────────────────┬────────────────────────────────────┘
-                         │ Async PostgreSQL (asyncpg)
-┌────────────────────────▼────────────────────────────────────┐
-│                     DATA TIER                               │
-│              Supabase (PostgreSQL as a Service)             │
-│  Tables: accounts | categories | transactions | audit_logs  │
-│  Row Level Security (RLS) | Real-time subscriptions         │
-│  Supabase Storage (future: invoice document uploads)        │
-└─────────────────────────────────────────────────────────────┘
-                         │
-┌────────────────────────▼────────────────────────────────────┐
-│                  EXTERNAL AI SERVICES                       │
-│  Google Gemini API (primary) | Anthropic Claude (secondary) │
-│  Provider-agnostic via PydanticAI + .env configuration      │
-└─────────────────────────────────────────────────────────────┘
++-------------------------------------------------------------+
+|                    PRESENTATION TIER                        |
+|          Next.js 14 + TypeScript (App Router)               |
+|    Dark Mode | Glassmorphism | Micro-Animations | Charts    |
+|         AI Chat Drawer | Dashboard | Reports                |
++------------------------+------------------------------------+
+                         | HTTPS REST API (JSON)
++------------------------v------------------------------------+
+|                     LOGIC TIER                              |
+|              FastAPI (Python, managed by uv)                |
+|  +------------------------------------------------------+   |
+|  |                  AI Agent Layer                      |   |
+|  |  PydanticAI Agent + Tool Definitions                 |   |
+|  |  -> create_transaction  -> list_transactions         |   |
+|  |  -> generate_pnl        -> generate_balance_sheet    |   |
+|  |  -> run_monthly_audit   -> summarize_spending        |   |
+|  +------------------------------------------------------+   |
+|  +------------------------------------------------------+   |
+|  |              REST API Endpoints                      |   |
+|  |  /api/v1/transactions  /api/v1/reports               |   |
+|  |  /api/v1/audit         /api/v1/agent/chat            |   |
+|  +------------------------------------------------------+   |
+|  Pydantic Schemas | SQLAlchemy Async ORM | Alembic          |
++------------------------+------------------------------------+
+                         | Async PostgreSQL (asyncpg)
++------------------------v------------------------------------+
+|                     DATA TIER                               |
+|              Supabase (PostgreSQL as a Service)             |
+|  Tables: accounts | categories | transactions | audit_logs  |
+|  Row Level Security (RLS) | Real-time subscriptions         |
+|  Supabase Storage (future: invoice document uploads)        |
++-------------------------------------------------------------+
+                         |
++------------------------v------------------------------------+
+|                  EXTERNAL AI SERVICES                       |
+|  Google Gemini API (primary) | Anthropic Claude (secondary) |
+|  Provider-agnostic via PydanticAI + .env configuration      |
++-------------------------------------------------------------+
 ```
 
 ### 6.2 Database Schema Overview

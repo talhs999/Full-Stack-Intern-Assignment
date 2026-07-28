@@ -10,6 +10,8 @@ if db_url.startswith("postgresql://") or db_url.startswith("postgres://"):
 connect_args = {}
 if "sqlite" in db_url:
     connect_args = {"check_same_thread": False}
+elif "postgresql" in db_url or "postgres" in db_url:
+    connect_args = {"ssl": "require"}
 
 engine = create_async_engine(db_url, echo=settings.DEBUG, connect_args=connect_args)
 AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

@@ -369,6 +369,12 @@ def section_banner(number, title, styles, page_width, color=C_BLUE):
     return [tbl, GradientRect(page_width - 4*cm, 4, C_GOLD, C_TEAL), Spacer(1, 10)]
 
 
+def format_md(text):
+    text = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", text)
+    text = re.sub(r"\*(.*?)\*", r"<i>\1</i>", text)
+    text = text.replace("**", "").replace("*", "")
+    return text
+
 # ─── Markdown Table Renderer ─────────────────────────────────────────────────
 def render_md_table(lines, page_width):
     rows = []
@@ -391,7 +397,7 @@ def render_md_table(lines, page_width):
         is_header = (i == 0)
         pr = []
         for cell in row:
-            cell_clean = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", cell)
+            cell_clean = format_md(cell)
             pr.append(Paragraph(cell_clean, ParagraphStyle(
                 f"TC{i}",
                 fontName="Helvetica-Bold" if is_header else "Helvetica",
@@ -520,7 +526,7 @@ def md_to_flowables(md_text, styles, page_width):
         # H4
         elif line.startswith("#### "):
             text = line[5:].strip()
-            text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+            text = format_md(text)
             elements.append(Paragraph(text, styles["h4"]))
 
         # Horizontal rule
@@ -533,7 +539,7 @@ def md_to_flowables(md_text, styles, page_width):
         # Bullet
         elif stripped.startswith("- ") or stripped.startswith("* "):
             text = stripped[2:].strip()
-            text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+            text = format_md(text)
             text = re.sub(r"`(.+?)`",
                           r"<font name='Courier' color='#0D2B5E'>\1</font>", text)
             elements.append(Paragraph(
@@ -544,7 +550,7 @@ def md_to_flowables(md_text, styles, page_width):
         elif re.match(r"^\d+\. ", stripped):
             num_text = re.sub(r"^\d+\. ", "", stripped)
             num_only = re.match(r"^(\d+)\.", stripped).group(1)
-            num_text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", num_text)
+            num_text = format_md(num_text)
             row = [[
                 Paragraph(f"<b>{num_only}</b>", ParagraphStyle("NumCircle",
                     fontName="Helvetica-Bold", fontSize=9,
@@ -582,7 +588,7 @@ def md_to_flowables(md_text, styles, page_width):
         # Regular paragraph
         else:
             text = stripped
-            text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
+            text = format_md(text)
             text = re.sub(r"`(.+?)`",
                           r"<font name='Courier' color='#0D2B5E'>\1</font>", text)
             # Pull quote: lines starting with > (abstract etc.)

@@ -10,7 +10,7 @@ export default function AIChatDrawer() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: "Hello! I am your **Cyber Nuts AI Accounting Assistant**. Ask me to record transactions or summarize financial reports in plain English or Urdu!\n\nTry: *\"Paid 45,000 for office rent today\"* or *\"Run monthly audit scan\"*."
+      content: "Hello! I am your Cyber Nuts AI Accounting Assistant (Powered by Gemini 2.0). Ask me to record transactions or summarize financial reports in plain English, Urdu, or Roman Urdu!\n\nTry:\n- 'Paid 45,000 for office rent today'\n- 'Mene 5000 bijli ka bill diya'\n- 'Hamara is mahine ka munafa kya hai?'"
     }
   ]);
   const [loading, setLoading] = useState(false);
@@ -142,7 +142,7 @@ export default function AIChatDrawer() {
                       : 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-medium shadow-md'
                   }`}
                 >
-                  <div className="whitespace-pre-wrap">{m.content}</div>
+                  <div className="whitespace-pre-wrap">{m.content.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1')}</div>
                 </div>
               </div>
             );

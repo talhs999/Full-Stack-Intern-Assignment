@@ -15,30 +15,30 @@ The **AI-Powered Accounting & Finance Assistant** is a next-generation enterpris
 ## 🏗️ Architecture & Tech Stack
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                CLIENT TIER (PORT 3000)                          │
-│   Next.js 14 (App Router) • TypeScript • Tailwind CSS • Glassmorphism UI       │
-│   ┌────────────────────┐   ┌────────────────────┐   ┌──────────────────────┐   │
-│   │  Dashboard & Stats │   │  Expense / Revenue │   │  Persistent AI Drawer│   │
-│   └─────────┬──────────┘   └─────────┬──────────┘   └──────────┬───────────┘   │
-└─────────────┼────────────────────────┼─────────────────────────┼───────────────┘
-              │                        │                         │ REST / JSON
-┌─────────────▼────────────────────────▼─────────────────────────▼───────────────┐
-│                              APPLICATION TIER (PORT 8000)                       │
-│       FastAPI (Async Python 3.11+) • Astral 'uv' Package Environment           │
-│   ┌────────────────────┐   ┌────────────────────┐   ┌──────────────────────┐   │
-│   │  Pydantic v2 Models│   │ SQLAlchemy Async   │   │  PydanticAI Engine   │   │
-│   │  Schema Validation │   │  CRUD & Seeding    │   │  Zero-Hallucination  │   │
-│   └─────────┬──────────┘   └─────────┬──────────┘   └──────────┬───────────┘   │
-└─────────────┼────────────────────────┼─────────────────────────┼───────────────┘
-              │                        │                         │ Asyncpg / SQL
-┌─────────────▼────────────────────────▼─────────────────────────▼───────────────┐
-│                                 DATA TIER (PERSISTENT)                          │
-│        Supabase PostgreSQL (Row Level Security & Append-Only Audit Logs)       │
-│   ┌────────────────────────────────────────────────────────────────────────┐   │
-│   │ tables: accounts | categories | transactions | audit_logs              │   │
-│   └────────────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────────┘
++---------------------------------------------------------------------------------+
+|                                CLIENT TIER (PORT 3000)                          |
+|   Next.js 14 (App Router) * TypeScript * Tailwind CSS * Glassmorphism UI        |
+|   +--------------------+   +--------------------+   +----------------------+    |
+|   |  Dashboard & Stats |   |  Expense / Revenue |   |  Persistent AI Drawer|    |
+|   +---------+----------+   +---------+----------+   +----------+-----------+    |
++-------------+------------------------+-------------------------+----------------+
+              |                        |                         | REST / JSON
++-------------v------------------------v-------------------------v----------------+
+|                              APPLICATION TIER (PORT 8000)                       |
+|       FastAPI (Async Python 3.11+) * Astral 'uv' Package Environment            |
+|   +--------------------+   +--------------------+   +----------------------+    |
+|   |  Pydantic v2 Models|   | SQLAlchemy Async   |   |  PydanticAI Engine   |    |
+|   |  Schema Validation |   |  CRUD & Seeding    |   |  Zero-Hallucination  |    |
+|   +---------+----------+   +---------+----------+   +----------+-----------+    |
++-------------+------------------------+-------------------------+----------------+
+              |                        |                         | Asyncpg / SQL
++-------------v------------------------v-------------------------v----------------+
+|                                 DATA TIER (PERSISTENT)                          |
+|        Supabase PostgreSQL (Row Level Security & Append-Only Audit Logs)        |
+|   +------------------------------------------------------------------------+    |
+|   | tables: accounts | categories | transactions | audit_logs              |    |
+|   +------------------------------------------------------------------------+    |
++---------------------------------------------------------------------------------+
 ```
 
 ### Key Technologies
@@ -125,33 +125,33 @@ uv run pytest -v
 ## 📁 Repository Structure
 
 ```
-├── research/                  # Phase 1: Research Paper & ReportLab PDF Generator
-│   ├── 01_Research_Paper.md
-│   └── generate_pdf.py
-├── specs/                     # Phase 2: System Specifications (SDD)
-│   ├── 01-system-architecture.md
-│   ├── 02-database-schema.md
-│   ├── 03-api-contracts.md
-│   ├── 04-ai-agent-behavior.md
-│   └── 05-frontend-features.md
-├── backend/                   # Phase 3: FastAPI Backend (managed with uv)
-│   ├── app/
-│   │   ├── models/            # SQLAlchemy ORM models
-│   │   ├── schemas/           # Pydantic v2 validation schemas
-│   │   ├── services/          # Ledger calculations & AI agent tool engine
-│   │   └── routers/           # REST API routes (/transactions, /reports, /audit, /agent)
-│   ├── tests/                 # Pytest test suite
-│   ├── pyproject.toml         # uv project configuration
-│   └── Dockerfile
-├── frontend/                  # Phase 3: Next.js 14 Glassmorphism Frontend
-│   ├── src/
-│   │   ├── app/               # Dashboard, Expenses, Ledgers, Reports & Audit screens
-│   │   ├── components/        # Navbar, StatCard, and persistent AIChatDrawer ⭐
-│   │   └── lib/               # TypeScript API client helper
-│   ├── tailwind.config / css  # Custom dark theme tokens
-│   └── Dockerfile
-├── docker-compose.yml         # Phase 4: Container orchestration
-└── Final_Research_Paper_AI_Accounting_Assistant.pdf  # Formatted Research Paper
+|-- research/                  # Phase 1: Research Paper & ReportLab PDF Generator
+|   |-- 01_Research_Paper.md
+|   +-- generate_pdf.py
+|-- specs/                     # Phase 2: System Specifications (SDD)
+|   |-- 01-system-architecture.md
+|   |-- 02-database-schema.md
+|   |-- 03-api-contracts.md
+|   |-- 04-ai-agent-behavior.md
+|   +-- 05-frontend-features.md
+|-- backend/                   # Phase 3: FastAPI Backend (managed with uv)
+|   |-- app/
+|   |   |-- models/            # SQLAlchemy ORM models
+|   |   |-- schemas/           # Pydantic v2 validation schemas
+|   |   |-- services/          # Ledger calculations & AI agent tool engine
+|   |   +-- routers/           # REST API routes (/transactions, /reports, /audit, /agent)
+|   |-- tests/                 # Pytest test suite
+|   |-- pyproject.toml         # uv project configuration
+|   +-- Dockerfile
+|-- frontend/                  # Phase 3: Next.js 14 Glassmorphism Frontend
+|   |-- src/
+|   |   |-- app/               # Dashboard, Expenses, Ledgers, Reports & Audit screens
+|   |   |-- components/        # Navbar, StatCard, and persistent AIChatDrawer
+|   |   +-- lib/               # TypeScript API client helper
+|   |-- tailwind.config / css  # Custom dark theme tokens
+|   +-- Dockerfile
+|-- docker-compose.yml         # Phase 4: Container orchestration
++-- Final_Research_Paper_AI_Accounting_Assistant.pdf  # Formatted Research Paper
 ```
 
 ---
