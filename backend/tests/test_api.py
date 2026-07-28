@@ -2,16 +2,39 @@ import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from app.main import app
-from app.database import engine, Base, AsyncSessionLocal
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.pool import StaticPool
+from app.database import Base, get_db
 from app.services.crud import seed_initial_data
+
+# Isolated in-memory async SQLite engine for robust, fast unit testing
+TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+test_engine = create_async_engine(
+    TEST_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+TestSessionLocal = async_sessionmaker(test_engine, class_=AsyncSession, expire_on_commit=False)
+
+async def override_get_db():
+    async with TestSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
+
+app.dependency_overrides[get_db] = override_get_db
 
 @pytest_asyncio.fixture(autouse=True)
 async def init_test_db():
-    async with engine.begin() as conn:
+    async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    async with AsyncSessionLocal() as db:
+    async with TestSessionLocal() as db:
         await seed_initial_data(db)
     yield
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
 
 @pytest.mark.asyncio
 async def test_health_check():
