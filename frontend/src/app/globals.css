@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-root: #090D16;
+    --card-bg: rgba(18, 26, 43, 0.65);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --accent-cyan: #00F2FE;
+    --accent-blue: #4FACFE;
+    --accent-coral: #FF0844;
+    --accent-gold: #FFD200;
+  }
+
+  body {
+    background-color: var(--bg-root);
+    color: var(--text-main);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+}
+
+/* Glassmorphism Classes */
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 242, 254, 0.3);
+  box-shadow: 0 12px 40px 0 rgba(0, 242, 254, 0.12);
+  transform: translateY(-2px);
+}
+
+.glass-panel {
+  background: rgba(13, 19, 33, 0.85);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient Background Mesh */
+.bg-mesh {
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(0, 242, 254, 0.15) 0px, transparent 50%),
+    radial-gradient(at 90% 80%, rgba(79, 172, 254, 0.12) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(255, 8, 68, 0.08) 0px, transparent 60%);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090D16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.5);
+}
+
+/* Glow effects & buttons */
+.btn-gradient {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+  color: #090D16;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
+}
+
+.btn-gradient:hover {
+  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.45);
+  transform: scale(1.02);
+}
+
+.btn-coral {
+  background: linear-gradient(135deg, var(--accent-coral) 0%, #FFB199 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 8, 68, 0.25);
+}
+
+.btn-coral:hover {
+  box-shadow: 0 6px 25px rgba(255, 8, 68, 0.45);
+  transform: scale(1.02);
+}
