@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: accounting_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-sqlite+aiosqlite:///./accounting.db}
+      - AI_PROVIDER=${AI_PROVIDER:-gemini}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-dev_key}
+      - APP_NAME=Cyber Nuts AI Accounting Assistant
+      - DEBUG=True
+      - API_V1_STR=/api/v1
+    volumes:
+      - backend_data:/app
+    restart: unless-stopped
+    networks:
+      - accounting_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: accounting_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - accounting_net
+
+networks:
+  accounting_net:
+    driver: bridge
+
+volumes:
+  backend_data:
