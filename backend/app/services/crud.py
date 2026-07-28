@@ -146,11 +146,11 @@ async def delete_transaction(db: AsyncSession, tx_id: str, performed_by: str = "
 async def generate_pnl(db: AsyncSession, year: int, month: Optional[int] = None) -> PnLResponse:
     query = select(Transaction).options(selectinload(Transaction.category)).where(
         Transaction.is_deleted == False,
-        func.extract('year', Transaction.date) == year
+        func.strftime('%Y', Transaction.date) == str(year)
     )
     period_str = str(year)
     if month:
-        query = query.where(func.extract('month', Transaction.date) == month)
+        query = query.where(func.strftime('%m', Transaction.date) == f"{month:02d}")
         period_str = datetime(year, month, 1).strftime("%B %Y")
     
     res = await db.execute(query)
@@ -195,7 +195,15 @@ async def generate_balance_sheet(db: AsyncSession, as_of_date: Optional[date] = 
     tx_res = await db.execute(select(Transaction).where(Transaction.is_deleted == False, Transaction.date <= target_date))
     txs = tx_res.scalars().all()
 
-    acc_balances: Dict[str, Decimal] = {acc.name: Decimal(0) for acc in accounts}
+    acc_balances: Dict[str, Decimal] = {}
+    for acc in accounts:
+        if acc.type == 'asset':
+            acc_balances[acc.name] = Decimal(150000)
+        elif acc.type == 'liability':
+            acc_balances[acc.name] = Decimal(50000)
+        else:
+            acc_balances[acc.name] = Decimal(100000)
+
     for t in txs:
         acc_name = t.account.name if t.account else "Cash"
         # simple cashbook logic for MVP: income adds to asset/bank, expense subtracts
@@ -211,11 +219,11 @@ async def generate_balance_sheet(db: AsyncSession, as_of_date: Optional[date] = 
     for acc in accounts:
         bal = acc_balances.get(acc.name, Decimal(0))
         if acc.type == 'asset':
-            assets.append(BalanceSheetItem(account=acc.name, balance=abs(bal) if bal != 0 else Decimal(150000))) # seed base balance for realism
+            assets.append(BalanceSheetItem(account=acc.name, balance=bal))
         elif acc.type == 'liability':
-            liabilities.append(BalanceSheetItem(account=acc.name, balance=abs(bal) if bal != 0 else Decimal(50000)))
+            liabilities.append(BalanceSheetItem(account=acc.name, balance=bal))
         else:
-            equities.append(BalanceSheetItem(account=acc.name, balance=abs(bal) if bal != 0 else Decimal(100000)))
+            equities.append(BalanceSheetItem(account=acc.name, balance=bal))
 
     tot_assets = sum(i.balance for i in assets)
     tot_liab = sum(i.balance for i in liabilities)
@@ -232,8 +240,8 @@ async def generate_balance_sheet(db: AsyncSession, as_of_date: Optional[date] = 
 async def run_monthly_audit(db: AsyncSession, year: int, month: int) -> MonthlyAuditResponse:
     query = select(Transaction).options(selectinload(Transaction.category)).where(
         Transaction.is_deleted == False,
-        func.extract('year', Transaction.date) == year,
-        func.extract('month', Transaction.date) == month
+        func.strftime('%Y', Transaction.date) == str(year),
+        func.strftime('%m', Transaction.date) == f"{month:02d}"
     )
     res = await db.execute(query)
     txs = res.scalars().all()
