@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { BarChart3, PieChart, ShieldAlert, CheckCircle2, AlertTriangle, RefreshCw, FileText, ArrowRight, DollarSign, Award, Layers } from 'lucide-react';
+import { BarChart3, PieChart, ShieldAlert, CheckCircle2, AlertTriangle, RefreshCw, FileText, ArrowRight, DollarSign, Award, Layers, Download, Calendar } from 'lucide-react';
 import { api, PnLReport, BalanceSheetReport, MonthlyAuditReport, AnomalyItem } from '@/lib/api';
 
 export default function ReportsPage() {
   const [tab, setTab] = useState<'pnl' | 'balance_sheet' | 'audit'>('pnl');
+  const [exportPeriod, setExportPeriod] = useState<'today' | 'week' | 'month' | 'all'>('month');
   const [loading, setLoading] = useState(true);
   const [pnl, setPnl] = useState<PnLReport | null>(null);
   const [bs, setBs] = useState<BalanceSheetReport | null>(null);
@@ -60,6 +61,69 @@ export default function ReportsPage() {
         >
           <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
         </button>
+      </div>
+
+      {/* Complete Financial Statement & PDF Download Center */}
+      <div className="glass-card p-6 rounded-3xl bg-gradient-to-r from-slate-900/90 via-blue-950/40 to-slate-900/90 border-cyan-500/20 space-y-4 shadow-2xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 flex items-center gap-1.5 w-fit">
+              <Award className="w-3.5 h-3.5 text-cyan-400" /> Double-Entry Verified Export
+            </span>
+            <h3 className="text-lg font-bold text-white mt-2 flex items-center gap-2">
+              <Download className="w-5 h-5 text-cyan-400" />
+              Download Official Financial Statement (PDF / CSV)
+            </h3>
+            <p className="text-xs text-slate-400">
+              Select your reporting period (Daily, Weekly, Monthly, or All-Time History) to generate a ReportLab PDF statement.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <a
+              href={`http://localhost:8000/api/v1/reports/statement/pdf?period=${exportPeriod}`}
+              target="_blank"
+              rel="noreferrer"
+              className="px-5 py-3 rounded-2xl btn-gradient text-slate-950 font-bold flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all text-sm"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Download PDF Statement</span>
+            </a>
+            <a
+              href={`http://localhost:8000/api/v1/reports/statement/csv?period=${exportPeriod}`}
+              target="_blank"
+              rel="noreferrer"
+              className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-emerald-300 border border-emerald-500/30 font-bold flex items-center gap-2 transition-all text-sm"
+            >
+              <Download className="w-4 h-4" />
+              <span>Export CSV</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Period Selector Tabs */}
+        <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5">
+          <span className="text-xs font-semibold text-slate-400 self-center mr-2 flex items-center gap-1">
+            <Calendar className="w-3.5 h-3.5 text-cyan-400" /> Select Period:
+          </span>
+          {[
+            { id: 'today', label: 'Din Ki (Today)' },
+            { id: 'week', label: 'Hafte Ki (Last 7 Days)' },
+            { id: 'month', label: 'Maheena Ki (This Month)' },
+            { id: 'all', label: 'Poori (All Time History)' }
+          ].map((p) => (
+            <button
+              key={p.id}
+              onClick={() => setExportPeriod(p.id as any)}
+              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                exportPeriod === p.id
+                  ? 'bg-cyan-500 text-slate-950 shadow-md font-extrabold scale-105'
+                  : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Tabs */}

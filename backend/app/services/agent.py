@@ -28,8 +28,26 @@ async def process_chat_message(
     """
     msg_lower = user_message.lower().strip()
 
-    # 1. Intent: Run Audit / Scan Anomalies
-    if any(w in msg_lower for w in ["audit", "anomal", "scan", "check karo", "ghalti", "duplicate", "farq", "investigate"]):
+    # 1. Intent: Download PDF / CSV / Complete Statement
+    if any(w in msg_lower for w in ["pdf", "download", "export", "file", "statement download", "statement do", "statement pdf", "print", "csv", "downlaod", "stament"]):
+        today = date.today()
+        pnl = await crud.generate_pnl(db, today.year, today.month)
+        reply = (
+            f"Here is your Complete Financial Statement & Ledger Report!\n"
+            f"----------------------------------------\n"
+            f"- Total Revenue (This Month): PKR {pnl.total_income:,.2f}\n"
+            f"- Total Expenses (This Month): PKR {pnl.total_expenses:,.2f}\n"
+            f"- Net Profit / Munafa: PKR {pnl.net_profit:,.2f}\n\n"
+            f"You can select your desired period (Daily, Weekly, Monthly, or All Time) and download the official verified PDF or CSV statement instantly!"
+        )
+        return ChatResponse(
+            reply=reply,
+            tool_used="generate_statement",
+            structured_data={"period": "all", "pnl": pnl.model_dump()}
+        )
+
+    # 2. Intent: Run Audit / Scan Anomalies
+    if any(w in msg_lower for w in ["audit", "anomal", "scan", "check karo", "ghalti", "duplicate", "farq", "investigate", "error", "fraud", "scam"]):
         today = date.today()
         audit_res = await crud.run_monthly_audit(db, today.year, today.month)
         reply = (
@@ -49,16 +67,16 @@ async def process_chat_message(
             structured_data=audit_res.model_dump()
         )
 
-    # 2. Intent: Profit & Loss / Spending summary / Munafa / Kharcha
-    if any(w in msg_lower for w in ["p&l", "profit", "loss", "spend", "summary", "munafa", "kharcha", "kamai", "hisab", "income statement", "revenue summary"]):
+    # 3. Intent: Profit & Loss / Spending summary / Munafa / Kharcha / Complete Report / Monthly Report
+    if any(w in msg_lower for w in ["report", "p&l", "profit", "loss", "spend", "summary", "munafa", "kharcha", "kamai", "hisab", "income", "revenue", "statement", "month", "mahina", "mahine", "kaise chal raha", "status", "overview", "result", "batao", "dikhao", "what is our", "how much", "kitna", "expenses", "earnings", "poori", "details", "data", "today", "aaj", "hafta", "week", "performance", "complete report"]):
         today = date.today()
         pnl = await crud.generate_pnl(db, today.year, today.month)
         margin = (float(pnl.net_profit) / float(pnl.total_income) * 100) if pnl.total_income > 0 else 0.0
         reply = (
-            f"Financial Summary (P&L) for {pnl.period}\n"
+            f"Complete Financial Summary & Report for {pnl.period}\n"
             f"----------------------------------------\n"
-            f"- Total Revenue: PKR {pnl.total_income:,.2f}\n"
-            f"- Total Expenses: PKR {pnl.total_expenses:,.2f}\n"
+            f"- Total Revenue (Income): PKR {pnl.total_income:,.2f}\n"
+            f"- Total Expenses (Kharcha): PKR {pnl.total_expenses:,.2f}\n"
             f"- Net Profit / Munafa: PKR {pnl.net_profit:,.2f}\n"
             f"- Profit Margin: {margin:.1f}%\n\n"
             f"Top Expense Category: {pnl.expense_breakdown[0].category if pnl.expense_breakdown else 'None'}."
@@ -69,8 +87,8 @@ async def process_chat_message(
             structured_data=pnl.model_dump()
         )
 
-    # 3. Intent: Balance Sheet / Assets / Liabilities / Sarmaya
-    if any(w in msg_lower for w in ["balance sheet", "asset", "liabilit", "equity", "sarmaya", "khazana", "accounts status", "status"]):
+    # 4. Intent: Balance Sheet / Assets / Liabilities / Sarmaya
+    if any(w in msg_lower for w in ["balance sheet", "asset", "liabilit", "equity", "sarmaya", "khazana", "accounts status", "balance", "net worth", "halat", "capital"]):
         bs = await crud.generate_balance_sheet(db, date.today())
         reply = (
             f"Balance Sheet Snapshot as of {bs.as_of_date}\n"
@@ -86,11 +104,9 @@ async def process_chat_message(
             structured_data=bs.model_dump()
         )
 
-    # 4. Intent: Add Transaction (Multilingual / Roman Urdu Heuristics)
-    # Match amounts like: 5000, 50,000, 15000.50
+    # 5. Intent: Add Transaction (Multilingual / Roman Urdu Heuristics)
     amount_match = re.search(r'(\d+[\d,]*(\.\d{1,2})?)', user_message)
-    # Check if message contains transaction keywords or if an amount is present with keywords
-    tx_keywords = ["add", "record", "paid", "received", "log", "enter", "diya", "diye", "pay", "pay kiya", "miley", "aya", "kharcha", "bill", "rent", "salary", "tea", "snack", "stationery"]
+    tx_keywords = ["add", "record", "paid", "received", "log", "enter", "diya", "diye", "pay", "pay kiya", "miley", "aya", "kharcha", "bill", "rent", "salary", "tea", "snack", "stationery", "khareeda", "laga", "diye", "mil gaye"]
     if amount_match and any(w in msg_lower for w in tx_keywords):
         raw_amt = amount_match.group(1).replace(",", "")
         try:
@@ -100,11 +116,9 @@ async def process_chat_message(
         except Exception:
             return ChatResponse(reply="Please provide a valid transaction amount greater than zero.")
 
-        # Determine type (income vs expense)
-        income_keywords = ["received", "income", "sales", "revenue", "miley", "aya", "bikri", "becha", "kamai", "profit", "service fee"]
+        income_keywords = ["received", "income", "sales", "revenue", "miley", "aya", "bikri", "becha", "kamai", "profit", "service fee", "mil gaye"]
         tx_type = "income" if any(w in msg_lower for w in income_keywords) else "expense"
         
-        # Categorization heuristics (English + Urdu + Roman Urdu)
         cat_name = "Miscellaneous"
         if any(w in msg_lower for w in ["rent", "kiraya", "dukan", "office rent"]): 
             cat_name = "Rent"
@@ -121,7 +135,6 @@ async def process_chat_message(
         elif tx_type == "income": 
             cat_name = "Sales"
 
-        # Resolve DB entities
         cats = await crud.get_categories(db)
         cat_obj = next((c for c in cats if c.name.lower() == cat_name.lower()), cats[0] if cats else None)
         accs = await crud.get_accounts(db)
@@ -158,16 +171,38 @@ async def process_chat_message(
             structured_data=TransactionResponse.model_validate(new_tx).model_dump()
         )
 
-    # Default Conversational Help Response (Multilingual / Roman Urdu)
-    help_reply = (
-        "Hello! I am your Cyber Nuts AI Accounting Assistant (Powered by Gemini 2.0).\n"
-        "You can speak with me in English, Urdu, or Roman Urdu!\n\n"
-        "Here are some examples of what you can ask me:\n"
-        "- 'Paid 5000 electricity bill'\n"
-        "- 'Mene 45000 office rent pay kiya today'\n"
-        "- 'Aaj 2500 chai and snacks me lag gaye'\n"
-        "- 'Hamara is mahine ka munafa / P&L kya hai?'\n"
-        "- 'Show me the Balance Sheet snapshot'\n"
-        "- 'Monthly audit scan chalao aur anomalies check karo'"
+    # 6. Fallback: If query is purely a greeting, reply with conversational intro. Otherwise, default to financial P&L report!
+    greetings = ["hi", "hello", "hey", "salam", "assalam", "assalamu", "who are you", "help", "madad", "kaise ho", "kya hal", "start"]
+    if any(msg_lower == g or msg_lower.startswith(g + " ") for g in greetings):
+        help_reply = (
+            "Hello! I am your Cyber Nuts AI Accounting Assistant (Powered by Gemini 2.0).\n"
+            "You can speak with me in English, Urdu, or Roman Urdu!\n\n"
+            "Here are some examples of what you can ask me:\n"
+            "- 'Complete report of the month'\n"
+            "- 'Download statement PDF'\n"
+            "- 'Paid 5000 electricity bill today'\n"
+            "- 'Mene 45000 office rent pay kiya today'\n"
+            "- 'Hamara is mahine ka munafa / P&L kya hai?'\n"
+            "- 'Monthly audit scan chalao aur anomalies check karo'"
+        )
+        return ChatResponse(reply=help_reply)
+
+    # For any other unmatched query, generate the complete financial report so the user always gets valuable data!
+    today = date.today()
+    pnl = await crud.generate_pnl(db, today.year, today.month)
+    margin = (float(pnl.net_profit) / float(pnl.total_income) * 100) if pnl.total_income > 0 else 0.0
+    reply = (
+        f"Complete Financial Summary & Report for {pnl.period}\n"
+        f"----------------------------------------\n"
+        f"- Total Revenue (Income): PKR {pnl.total_income:,.2f}\n"
+        f"- Total Expenses (Kharcha): PKR {pnl.total_expenses:,.2f}\n"
+        f"- Net Profit / Munafa: PKR {pnl.net_profit:,.2f}\n"
+        f"- Profit Margin: {margin:.1f}%\n\n"
+        f"Top Expense Category: {pnl.expense_breakdown[0].category if pnl.expense_breakdown else 'None'}."
     )
-    return ChatResponse(reply=help_reply)
+    return ChatResponse(
+        reply=reply,
+        tool_used="generate_pnl",
+        structured_data=pnl.model_dump()
+    )
+

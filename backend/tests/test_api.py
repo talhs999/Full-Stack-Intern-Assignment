@@ -62,3 +62,41 @@ async def test_ai_chat_fallback():
         data = res.json()
         assert data["success"] is True
         assert "financial summary" in data["data"]["reply"].lower()
+
+@pytest.mark.asyncio
+async def test_download_pdf_statement():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        res = await client.get("/api/v1/reports/statement/pdf?period=month")
+        assert res.status_code == 200
+        assert res.headers["content-type"] == "application/pdf"
+        assert len(res.content) > 500  # valid PDF bytes generated
+
+@pytest.mark.asyncio
+async def test_download_csv_statement():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        res = await client.get("/api/v1/reports/statement/csv?period=all")
+        assert res.status_code == 200
+        assert res.headers["content-type"] == "text/csv; charset=utf-8" or "text/csv" in res.headers["content-type"]
+        assert "EXECUTIVE SUMMARY" in res.text
+
+@pytest.mark.asyncio
+async def test_complete_report_query():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        res = await client.post("/api/v1/agent/chat", json={"message": "complete report of the month"})
+        assert res.status_code == 200
+        data = res.json()
+        assert data["success"] is True
+        assert data["data"]["tool_used"] == "generate_pnl"
+        assert "complete financial summary" in data["data"]["reply"].lower()
+
+@pytest.mark.asyncio
+async def test_download_statement_query():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        res = await client.post("/api/v1/agent/chat", json={"message": "complete pdf bhi genrate karo download"})
+        assert res.status_code == 200
+        data = res.json()
+        assert data["success"] is True
+        assert data["data"]["tool_used"] == "generate_statement"
+        assert "download" in data["data"]["reply"].lower()
+
+
