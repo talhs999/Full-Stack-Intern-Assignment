@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, X, Send, Bot, User, RefreshCw, CheckCircle2, ArrowRight, DollarSign, ShieldAlert } from 'lucide-react';
+import { Sparkles, X, Send, Bot, User, RefreshCw, CheckCircle2, ArrowRight, DollarSign, ShieldAlert, FileText, Download } from 'lucide-react';
 import { api, ChatMessage } from '@/lib/api';
 
 export default function AIChatDrawer() {
@@ -10,7 +10,7 @@ export default function AIChatDrawer() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: "Hello! I am your Cyber Nuts AI Accounting Assistant (Powered by Gemini 2.0). Ask me to record transactions or summarize financial reports in plain English, Urdu, or Roman Urdu!\n\nTry:\n- 'Paid 45,000 for office rent today'\n- 'Mene 5000 bijli ka bill diya'\n- 'Hamara is mahine ka munafa kya hai?'"
+      content: "Hello! I am your Cyber Nuts AI Accounting Assistant (Powered by Gemini 2.0). Ask me to record transactions or summarize financial reports in plain English, Urdu, or Roman Urdu!\n\nTry:\n- 'Complete report of the month'\n- 'Download statement PDF'\n- 'Paid 45,000 for office rent today'\n- 'Mene 5000 bijli ka bill diya'\n- 'Hamara is mahine ka munafa kya hai?'"
     }
   ]);
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ export default function AIChatDrawer() {
     try {
       const res = await api.chatWithAgent(msgText, messages);
       setMessages([...newHistory, { role: 'assistant', content: res.reply }]);
-      if (res.structured_data) {
+      if (res.structured_data || res.tool_used === 'generate_pnl' || res.tool_used === 'generate_statement') {
         setLastStructuredData({ type: res.tool_used, data: res.structured_data });
       }
     } catch (error: any) {
@@ -54,6 +54,8 @@ export default function AIChatDrawer() {
   };
 
   const quickPrompts = [
+    "Complete report of the month",
+    "Download statement PDF",
     "Paid 50,000 for Office Rent",
     "Paid 3,500 for Petty Cash tea & snacks",
     "What is our Profit & Loss summary?",
@@ -171,6 +173,55 @@ export default function AIChatDrawer() {
             >
               Dismiss
             </button>
+          </div>
+        )}
+
+        {lastStructuredData && (lastStructuredData.type === 'generate_pnl' || lastStructuredData.type === 'generate_statement') && (
+          <div className="m-4 p-4 rounded-2xl bg-gradient-to-r from-cyan-950/80 to-blue-950/80 border border-cyan-500/30 text-xs text-cyan-200 space-y-3 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 font-bold text-sm text-cyan-300">
+                <FileText className="w-4 h-4 text-cyan-400" />
+                <span>Complete Financial Statement Ready</span>
+              </div>
+              <button
+                onClick={() => setLastStructuredData(null)}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-slate-300 leading-relaxed">
+              Download your double-entry verified statement for this month or all-time history:
+            </p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <a
+                href="http://localhost:8000/api/v1/reports/statement/pdf?period=month"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition-all shadow-md"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>PDF (This Month)</span>
+              </a>
+              <a
+                href="http://localhost:8000/api/v1/reports/statement/pdf?period=all"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold transition-all border border-white/10"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>PDF (All Time)</span>
+              </a>
+              <a
+                href="http://localhost:8000/api/v1/reports/statement/csv?period=all"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-300 font-semibold transition-all border border-emerald-500/30"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>CSV Ledger</span>
+              </a>
+            </div>
           </div>
         )}
 
