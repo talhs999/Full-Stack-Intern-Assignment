@@ -3,8 +3,8 @@
 
 ---
 
-**Prepared by:** [Your Name]  
-**Internship Organization:** [Company Name]  
+**Prepared by:** Muhammad Talha Khan  
+**Internship Organization:** Cyber Nuts  
 **Date:** July 2026  
 **Assignment:** Full-Stack AI Developer Intern — Phase 1 Research Submission  
 
