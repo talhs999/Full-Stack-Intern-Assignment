@@ -89,7 +89,7 @@ export default function ReportsPage() {
           }`}
         >
           <ShieldAlert className="w-4 h-4 text-amber-400" />
-          <span>AI Audit ⭐</span>
+          <span>AI Audit</span>
         </button>
       </div>
 
@@ -225,13 +225,13 @@ export default function ReportsPage() {
         </div>
       )}
 
-      {/* Tab 3: AI Anomaly & Audit View ⭐ */}
+      {/* Tab 3: AI Anomaly & Audit View */}
       {tab === 'audit' && (
         <div className="glass-card p-8 rounded-3xl space-y-8 border-amber-500/30">
           <div className="border-b border-white/10 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-amber-500/10 via-transparent to-transparent p-6 rounded-2xl -m-2">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30 flex items-center gap-1.5 w-max">
-                <ShieldAlert className="w-3.5 h-3.5" /> Automated Anomaly Detection ⭐
+                <ShieldAlert className="w-3.5 h-3.5" /> Automated Anomaly Detection
               </span>
               <h3 className="text-2xl font-bold text-white mt-2">AI Continuous Ledger Audit</h3>
               <p className="text-sm text-slate-300 mt-1">{audit?.ai_summary || 'Scanning ledger for duplicates, statistical outliers, and policy compliance...'}</p>
@@ -244,7 +244,7 @@ export default function ReportsPage() {
               <div className="h-8 w-px bg-white/10" />
               <div className="text-center">
                 <p className="text-[11px] text-slate-400">Scan Status</p>
-                <p className="text-xs font-bold text-emerald-400 uppercase">Real-time ✅</p>
+                <p className="text-xs font-bold text-emerald-400 uppercase">Real-time</p>
               </div>
             </div>
           </div>
@@ -294,7 +294,7 @@ export default function ReportsPage() {
                               status === 'approved' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
                             }`}
                           >
-                            {status === 'approved' ? 'Verified & Approved ✅' : 'Flagged for Audit ❌'}
+                            {status === 'approved' ? 'Verified & Approved' : 'Flagged for Audit'}
                           </span>
                         ) : (
                           <>

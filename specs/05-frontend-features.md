@@ -65,7 +65,7 @@ We adhere to the project's **Rich Aesthetics** requirement: an interface that wo
 ### Screen 4: Financial Reports & Audit View (`/reports`)
 - **Tab 1: Profit & Loss (P&L):** Clean accounting statement view showing Revenue subtotal, Expense subtotal, and Net Income with drill-down capability into individual accounts.
 - **Tab 2: Balance Sheet:** Structured Assets = Liabilities + Equity view.
-- **Tab 3: AI Anomaly & Audit View ⭐ (Core differentiator):**
+- **Tab 3: AI Anomaly & Audit View (Core differentiator):**
   - Displays automated audit scan results for the month.
   - Highlights potential duplicates (same amount/category in short time).
   - Flags statistical outliers (e.g., electricity bill 300% higher than average).
@@ -73,8 +73,8 @@ We adhere to the project's **Rich Aesthetics** requirement: an interface that wo
 
 ---
 
-### Screen 5: Persistent AI Chat Drawer ⭐ (`<AIChatDrawer />`)
-- **Placement:** Floating pill button at bottom-right ("✨ Ask AI Assistant") that opens a sleek glassmorphism sidebar drawer from the right.
+### Screen 5: Persistent AI Chat Drawer (`<AIChatDrawer />`)
+- **Placement:** Floating pill button at bottom-right ("Ask AI Assistant") that opens a sleek glassmorphism sidebar drawer from the right.
 - **Capabilities in UI:**
   - **Conversational Entry:** User types *"Paid 25000 for high speed internet bill today from Bank"* -> Assistant replies with structured confirmation card and automatically refreshes the underlying page data!
   - **Financial Q&A:** User asks *"What is our biggest expense this month?"* -> Assistant presents an explanation along with an inline mini P&L table.

@@ -54,9 +54,9 @@ The **AI-Powered Accounting & Finance Assistant** is a next-generation enterpris
 
 1. **Zero-Hallucination Financial Calculations:**
    - The AI agent is restricted from computing totals or averages in its LLM context. It dynamically invokes deterministic SQL aggregation tools (`generate_pnl`, `generate_balance_sheet`).
-2. **Persistent AI Chat Drawer ⭐:**
+2. **Persistent AI Chat Drawer:**
    - Accessible from any page via a floating trigger. Users can input plain natural language (English or Urdu) such as *"Paid 25,000 for office rent today"* -> The agent resolves accounts, logs the transaction, and returns a structured confirmation badge.
-3. **Automated Continuous Audit Scan ⭐:**
+3. **Automated Continuous Audit Scan:**
    - Evaluates monthly transactions against statistical anomaly heuristics:
      - **High-Risk Duplicate Detection:** Same amount and category within a 3-day window.
      - **Outlier Alert:** Single expense exceeding standard operational thresholds.
@@ -167,5 +167,5 @@ uv run pytest -v
 | **Database Engine** | **Supabase PostgreSQL** (with local dev fallback) | `specs/02-database-schema.md`, `backend/app/models` |
 | **AI Framework** | **PydanticAI** + Gemini 2.0 Flash + Zero Hallucination | `backend/app/services/agent.py` |
 | **Frontend Framework** | **Next.js 14** + TypeScript + Rich Glassmorphism | `frontend/src/` |
-| **Continuous Audit View ⭐** | Automated anomaly detection heuristics | `frontend/src/app/reports/page.tsx` |
+| **Continuous Audit View** | Automated anomaly detection heuristics | `frontend/src/app/reports/page.tsx` |
 | **Containerization** | Multi-stage Docker builds & Compose | `docker-compose.yml`, Dockerfiles |
