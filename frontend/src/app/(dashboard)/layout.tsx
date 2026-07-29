@@ -21,6 +21,7 @@ export default function DashboardLayout({
         <main className="flex-1 overflow-y-auto bg-[var(--bg-root)] p-6 dark:bg-slate-950 transition-colors duration-200">
           <div className="max-w-7xl mx-auto w-full">
             {children}
+          </div>
         </main>
       </div>
     </div>
