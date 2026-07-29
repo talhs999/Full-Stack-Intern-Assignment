@@ -6,6 +6,13 @@ from app.schemas.schemas import TransactionResponse, PnLResponse
 
 
 
+def clean_text(s: str) -> str:
+    if not s:
+        return ""
+    # Standardize unicode quotes, dashes, and bullet points to latin-1 equivalents
+    s = s.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"').replace("–", "-").replace("—", "-").replace("…", "...")
+    return s.encode('latin-1', 'replace').decode('latin-1')
+
 def generate_pdf_statement_bytes(
     transactions: List[TransactionResponse],
     pnl: PnLResponse,
@@ -39,7 +46,7 @@ def generate_pdf_statement_bytes(
     # Title & Metadata
     pdf.set_font('Helvetica', 'B', 12)
     pdf.set_text_color(69, 90, 100)
-    pdf.cell(0, 8, f"Period: {period_label}", ln=True, align='R')
+    pdf.cell(0, 8, clean_text(f"Period: {period_label}"), ln=True, align='R')
     pdf.cell(0, 8, f"Generated On: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align='R')
     pdf.ln(10)
 
@@ -78,7 +85,7 @@ def generate_pdf_statement_bytes(
     pdf.set_text_color(33, 33, 33)
     if pnl.income_breakdown:
         for item in pnl.income_breakdown:
-            pdf.cell(80, 8, item.category)
+            pdf.cell(80, 8, clean_text(item.category))
             pdf.cell(0, 8, f"PKR {item.amount:,.2f}", ln=True, align='R')
     else:
         pdf.cell(0, 8, "No income recorded for this period.", ln=True)
@@ -91,7 +98,7 @@ def generate_pdf_statement_bytes(
     pdf.set_text_color(33, 33, 33)
     if pnl.expense_breakdown:
         for item in pnl.expense_breakdown:
-            pdf.cell(80, 8, item.category)
+            pdf.cell(80, 8, clean_text(item.category))
             pdf.cell(0, 8, f"PKR {item.amount:,.2f}", ln=True, align='R')
     else:
         pdf.cell(0, 8, "No expenses recorded for this period.", ln=True)
@@ -121,15 +128,16 @@ def generate_pdf_statement_bytes(
         t_type = "Income" if t.type == "income" else "Expense"
         pdf.cell(col_widths[1], 8, t_type, border=1, align='C')
         cat = t.category.name if t.category else "N/A"
-        pdf.cell(col_widths[2], 8, cat[:15], border=1, align='C')
+        pdf.cell(col_widths[2], 8, clean_text(cat[:15]), border=1, align='C')
         acc = t.account.name if t.account else "N/A"
-        pdf.cell(col_widths[3], 8, acc[:20], border=1, align='C')
-        desc = (t.description or "")[:30]
+        pdf.cell(col_widths[3], 8, clean_text(acc[:20]), border=1, align='C')
+        desc = clean_text((t.description or "")[:30])
         pdf.cell(col_widths[4], 8, desc, border=1, align='L')
         pdf.cell(col_widths[5], 8, f"{t.amount:,.0f}", border=1, align='R')
         pdf.ln()
 
-    return bytes(pdf.output())
+    out = pdf.output()
+    return bytes(out)
 
 def generate_csv_statement_string(
     transactions: List[TransactionResponse],
