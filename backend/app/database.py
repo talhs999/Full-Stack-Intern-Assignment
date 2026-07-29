@@ -18,7 +18,24 @@ AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_co
 
 Base = declarative_base()
 
+import os
+
+_db_initialized = False
+
 async def get_db():
+    global _db_initialized
+    if not _db_initialized:
+        # Check if we need to run init on Vercel cold start
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        
+        # Lazy load seed data
+        from app.services.crud import seed_initial_data
+        async with AsyncSessionLocal() as db_session:
+            await seed_initial_data(db_session)
+            
+        _db_initialized = True
+
     async with AsyncSessionLocal() as session:
         try:
             yield session
