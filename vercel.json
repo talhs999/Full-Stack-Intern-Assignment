@@ -5,22 +5,26 @@
             "framework": "nextjs"
         },
         "backend": {
-            "root": "backend"
+            "root": "backend",
+            "framework": "fastapi",
+            "entrypoint": "app/main.py"
         }
     },
     "rewrites": [
         {
-            "source": "/api/backend(/.*)?",
+            "source": "/api/v1/(.*)",
             "destination": {
                 "type": "service",
-                "service": "backend"
+                "service": "backend",
+                "path": "/api/v1/$1"
             }
         },
         {
             "source": "/(.*)",
             "destination": {
                 "type": "service",
-                "service": "frontend"
+                "service": "frontend",
+                "path": "/$1"
             }
         }
     ]
