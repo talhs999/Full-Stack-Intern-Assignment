@@ -6,10 +6,9 @@ class Settings(BaseSettings):
     APP_NAME: str = "Cyber Nuts AI Accounting Assistant"
     DEBUG: bool = True
     API_V1_STR: str = "/api/v1"
-    # On Vercel, the file system is read-only except for /tmp.
-    # We dynamically check if it's running on Vercel and use /tmp.
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite+aiosqlite:////tmp/accounting.db" if os.getenv("VERCEL") else "sqlite+aiosqlite:///./accounting.db")
-    
+    # We force SQLite on Vercel because the user has a broken Supabase URL in their Vercel settings
+    # which causes 500 errors.
+    DATABASE_URL: str = "sqlite+aiosqlite:////tmp/accounting.db" if os.getenv("VERCEL") else os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./accounting.db")
     AI_PROVIDER: str = "gemini"
     GEMINI_API_KEY: Optional[str] = None
     OPENAI_API_KEY: Optional[str] = None
