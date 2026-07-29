@@ -1,7 +1,7 @@
 from datetime import datetime, date
 from decimal import Decimal
 from typing import Optional, Literal, Any, List, Dict
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, computed_field
 
 # --- Envelopes ---
 class ApiResponse(BaseModel):
@@ -15,9 +15,13 @@ class AccountBase(BaseModel):
     type: Literal['asset', 'liability', 'equity', 'revenue', 'expense']
     description: Optional[str] = None
     is_active: bool = True
+    opening_balance: Decimal = Decimal('0.0')
 
 class AccountCreate(AccountBase):
     pass
+
+class AccountUpdate(BaseModel):
+    opening_balance: Decimal
 
 class AccountResponse(AccountBase):
     id: str
@@ -108,9 +112,17 @@ class PnLResponse(BaseModel):
     income_breakdown: List[CategoryBreakdownItem]
     expense_breakdown: List[CategoryBreakdownItem]
 
+    @computed_field
+    @property
+    def profit_margin_percentage(self) -> str:
+        if self.total_income > 0:
+            return f"{((self.net_profit / self.total_income) * 100):.1f}%"
+        return "0.0%"
+
 class BalanceSheetItem(BaseModel):
     account: str
     balance: Decimal
+    warning: Optional[str] = None
 
 class BalanceSheetSection(BaseModel):
     total: Decimal
@@ -134,6 +146,8 @@ class MonthlyAuditResponse(BaseModel):
     period: str
     anomalies: List[AnomalyItem]
     total_anomalies: int
+    total_transactions: int
+    status: str  # "clean" or "anomalies_found"
     ai_summary: str
 
 # --- AI Chat Schemas ---

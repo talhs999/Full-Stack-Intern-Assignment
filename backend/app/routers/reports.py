@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.services import crud
+from app.services.crud import compute_pnl_from_transactions
 from app.services.export import generate_pdf_statement_bytes, generate_csv_statement_string
 from app.schemas.schemas import ApiResponse, PnLResponse, BalanceSheetResponse, TransactionResponse
 
@@ -13,11 +14,13 @@ router = APIRouter()
 
 @router.get("/reports/pnl", response_model=ApiResponse)
 async def get_pnl_report(
-    year: int = Query(date.today().year),
-    month: Optional[int] = Query(date.today().month, ge=1, le=12),
+    year: Optional[int] = Query(None),
+    month: Optional[int] = Query(None, ge=1, le=12),
     db: AsyncSession = Depends(get_db)
 ):
-    pnl = await crud.generate_pnl(db, year, month)
+    actual_year = year or date.today().year
+    actual_month = month or date.today().month
+    pnl = await crud.generate_pnl(db, actual_year, actual_month)
     return ApiResponse(success=True, data=pnl)
 
 @router.get("/reports/balance-sheet", response_model=ApiResponse)
@@ -60,8 +63,8 @@ async def download_pdf_statement(
     txs, _ = await crud.list_transactions(db, page=1, page_size=10000, date_from=date_from, date_to=date_to)
     tx_responses = [TransactionResponse.model_validate(t) for t in txs]
     
-    # Get summary metrics
-    pnl = await crud.generate_pnl(db, today.year, today.month)
+    # Compute PnL summary from the SAME filtered transactions (not a separate month query)
+    pnl = compute_pnl_from_transactions(txs, label)
     
     pdf_bytes = generate_pdf_statement_bytes(tx_responses, pnl, label)
     filename = f"CyberNuts_Statement_{period}_{today.strftime('%Y%m%d')}.pdf"
@@ -106,7 +109,8 @@ async def download_csv_statement(
 
     txs, _ = await crud.list_transactions(db, page=1, page_size=10000, date_from=date_from, date_to=date_to)
     tx_responses = [TransactionResponse.model_validate(t) for t in txs]
-    pnl = await crud.generate_pnl(db, today.year, today.month)
+    # Compute PnL summary from the SAME filtered transactions (not a separate month query)
+    pnl = compute_pnl_from_transactions(txs, label)
     
     csv_str = generate_csv_statement_string(tx_responses, pnl, label)
     filename = f"CyberNuts_Statement_{period}_{today.strftime('%Y%m%d')}.csv"

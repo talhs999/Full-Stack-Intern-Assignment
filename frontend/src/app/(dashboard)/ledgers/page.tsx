@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { BookOpen, Search, Download, Filter, ArrowUpDown, RefreshCw, Calendar, Tag, CreditCard } from 'lucide-react';
+import { BookOpen, Search, Download, RefreshCw } from 'lucide-react';
 import { api, Transaction, Account, Category } from '@/lib/api';
 
 export default function LedgersPage() {
@@ -62,7 +62,7 @@ export default function LedgersPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `cyber_nuts_general_ledger_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `cybernuts_general_ledger_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -73,11 +73,11 @@ export default function LedgersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-            <BookOpen className="w-8 h-8 text-cyan-400" />
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+            <BookOpen className="w-8 h-8 text-emerald-500" />
             General Ledger & Historical Records
           </h2>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Auditable double-entry chronological record of all corporate financial events
           </p>
         </div>
@@ -85,32 +85,32 @@ export default function LedgersPage() {
           <button
             onClick={loadLedgers}
             disabled={loading}
-            className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-all"
+            className="p-3 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 shadow-sm transition-all"
             title="Refresh Ledger"
           >
-            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-emerald-500' : ''}`} />
           </button>
           <button
             onClick={exportCSV}
-            className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-white font-semibold flex items-center gap-2 shadow-lg transition-all"
+            className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold flex items-center gap-2 shadow-sm transition-all"
           >
-            <Download className="w-4 h-4 text-cyan-400" />
+            <Download className="w-4 h-4 text-emerald-400" />
             <span>Export CSV</span>
           </button>
         </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="glass-card p-6 rounded-3xl space-y-4">
+      <div className="fp-card p-6 space-y-4">
         <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500" />
+            <Search className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search description..."
-              className="w-full bg-slate-950/80 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-400 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
             />
           </div>
 
@@ -118,7 +118,7 @@ export default function LedgersPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
             >
               <option value="">All Types (Income & Expense)</option>
               <option value="income">Income Only (+)</option>
@@ -130,7 +130,7 @@ export default function LedgersPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
             >
               <option value="">All Categories</option>
               {categories.map((c) => (
@@ -145,7 +145,7 @@ export default function LedgersPage() {
             <select
               value={accountFilter}
               onChange={(e) => setAccountFilter(e.target.value)}
-              className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
             >
               <option value="">All Accounts</option>
               {accounts.map((a) => (
@@ -159,16 +159,16 @@ export default function LedgersPage() {
       </div>
 
       {/* Ledger Table */}
-      <div className="glass-card p-6 rounded-3xl space-y-4">
-        <div className="flex items-center justify-between border-b border-white/5 pb-4 text-xs text-slate-400">
+      <div className="fp-card p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4 text-xs text-slate-500">
           <span>Showing {transactions.length} immutable ledger records</span>
-          <span className="font-mono text-cyan-400">Database Engine: Supabase / PostgreSQL</span>
+          <span className="font-mono font-bold text-slate-400">Database Engine: Supabase / PostgreSQL</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-slate-400 text-xs uppercase tracking-wider">
+              <tr className="border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider">
                 <th className="pb-3 font-semibold">Date</th>
                 <th className="pb-3 font-semibold">Ref #</th>
                 <th className="pb-3 font-semibold">Description</th>
@@ -177,33 +177,33 @@ export default function LedgersPage() {
                 <th className="pb-3 font-semibold text-right">Debit / Credit (PKR)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-100">
               {transactions.length > 0 ? (
                 transactions.map((tx) => {
                   const isInc = tx.type === 'income';
                   return (
-                    <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="py-4 text-xs font-mono text-slate-400">{tx.date}</td>
-                      <td className="py-4 text-xs font-mono text-slate-500">{tx.reference_no || '—'}</td>
-                      <td className="py-4 font-medium text-white">{tx.description}</td>
+                    <tr key={tx.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="py-4 text-xs font-mono text-slate-500">{tx.date}</td>
+                      <td className="py-4 text-xs font-mono text-slate-400">{tx.reference_no || '—'}</td>
+                      <td className="py-4 font-medium text-slate-900 dark:text-white">{tx.description}</td>
                       <td className="py-4">
                         <span
-                          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-medium border"
+                          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase border"
                           style={{
-                            backgroundColor: `${tx.category?.color || '#00F2FE'}15`,
-                            borderColor: `${tx.category?.color || '#00F2FE'}40`,
-                            color: tx.category?.color || '#00F2FE',
+                            backgroundColor: `${tx.category?.color || '#10B981'}15`,
+                            borderColor: `${tx.category?.color || '#10B981'}40`,
+                            color: tx.category?.color || '#10B981',
                           }}
                         >
                           {tx.category?.name || 'Uncategorized'}
                         </span>
                       </td>
-                      <td className="py-4 text-xs text-slate-300">
-                        <span className="px-2 py-1 rounded bg-slate-900 border border-white/5">
+                      <td className="py-4 text-xs font-medium text-slate-600">
+                        <span className="px-2 py-1 rounded-md bg-slate-100 border border-slate-200">
                           {tx.account?.name || 'Cash'}
                         </span>
                       </td>
-                      <td className={`py-4 font-mono font-bold text-right ${isInc ? 'text-emerald-400' : 'text-slate-200'}`}>
+                      <td className={`py-4 font-mono font-bold text-right ${isInc ? 'text-emerald-600' : 'text-slate-900'}`}>
                         {isInc ? `+ PKR ${tx.amount.toLocaleString()}` : `- PKR ${tx.amount.toLocaleString()}`}
                       </td>
                     </tr>

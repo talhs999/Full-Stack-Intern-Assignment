@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import date
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,9 +22,11 @@ async def get_audit_logs(
 
 @router.get("/audit/anomalies", response_model=ApiResponse)
 async def get_audit_anomalies(
-    year: int = Query(date.today().year),
-    month: int = Query(date.today().month, ge=1, le=12),
+    year: Optional[int] = Query(None),
+    month: Optional[int] = Query(None, ge=1, le=12),
     db: AsyncSession = Depends(get_db)
 ):
-    audit_res = await crud.run_monthly_audit(db, year, month)
+    actual_year = year or date.today().year
+    actual_month = month or date.today().month
+    audit_res = await crud.run_monthly_audit(db, actual_year, actual_month)
     return ApiResponse(success=True, data=audit_res)
