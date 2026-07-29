@@ -11,8 +11,8 @@ from app.services import crud
 from app.schemas.schemas import TransactionCreate, TransactionResponse, ChatMessage, ChatResponse
 
 # Provide the API key for Pydantic-AI Google Provider
-if settings.GEMINI_API_KEY:
-    os.environ["GOOGLE_API_KEY"] = settings.GEMINI_API_KEY
+# If not present in Vercel env, provide a dummy key so the app doesn't crash on boot!
+os.environ["GOOGLE_API_KEY"] = settings.GEMINI_API_KEY or "dummy_key"
 
 agent = Agent(
     "google:gemini-2.5-flash",
@@ -95,6 +95,12 @@ async def process_chat_message(
     Processes a natural language chat message using native Gemini function calling.
     """
     try:
+        if os.environ.get("GOOGLE_API_KEY") == "dummy_key":
+            return ChatResponse(
+                reply="Sorry, the Gemini AI is not configured. Please add your GEMINI_API_KEY in the Vercel Environment Variables.",
+                suggested_actions=[]
+            )
+            
         result = await agent.run(user_message, deps=db)
         
         tool_used = None
