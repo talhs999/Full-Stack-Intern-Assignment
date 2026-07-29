@@ -1,5 +1,6 @@
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
+import AIChatDrawer from '@/components/AIChatDrawer';
 
 export default function DashboardLayout({
   children,
@@ -23,6 +24,9 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
+      
+      {/* Global AI Chat Drawer */}
+      <AIChatDrawer />
     </div>
   );
 }

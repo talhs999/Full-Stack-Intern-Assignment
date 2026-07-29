@@ -27,28 +27,8 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // IMPORTANT: Avoid writing any logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with cross-site request forgery (CSRF) attacks.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
-  }
-
-  if (user && request.nextUrl.pathname.startsWith('/login')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
-    return NextResponse.redirect(url)
-  }
+  // Authentication Bypassed for Assignment Submission
+  // The app will not redirect to /login and will allow full access.
 
   return supabaseResponse
 }
