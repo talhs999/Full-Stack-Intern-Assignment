@@ -315,7 +315,16 @@ export default function ExpensesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {transactions.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-slate-500">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <RefreshCw className="w-5 h-5 animate-spin text-rose-500" />
+                        <span>Waking up database & loading entries...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : transactions.length > 0 ? (
                   transactions.map((tx) => {
                     const isInc = tx.type === 'income';
                     return (
@@ -326,9 +335,9 @@ export default function ExpensesPage() {
                           <span
                             className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase border"
                             style={{
-                              backgroundColor: `${tx.category?.color || '#10B981'}15`,
-                              borderColor: `${tx.category?.color || '#10B981'}40`,
-                              color: tx.category?.color || '#10B981',
+                              backgroundColor: `${tx.category?.color || '#F43F5E'}15`,
+                              borderColor: `${tx.category?.color || '#F43F5E'}40`,
+                              color: tx.category?.color || '#F43F5E',
                             }}
                           >
                             {tx.category?.name || 'Uncategorized'}

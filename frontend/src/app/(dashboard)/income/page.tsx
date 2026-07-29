@@ -315,7 +315,16 @@ export default function IncomePage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {transactions.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-slate-500">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <RefreshCw className="w-5 h-5 animate-spin text-emerald-500" />
+                        <span>Waking up database & loading entries...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : transactions.length > 0 ? (
                   transactions.map((tx) => {
                     const isInc = tx.type === 'income';
                     return (
