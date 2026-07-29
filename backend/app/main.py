@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base, AsyncSessionLocal
 from app.services.crud import seed_initial_data
-from app.routers import transactions, reports, audit, agent
+from app.routers import transactions, reports, audit, agent, accounts
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -38,6 +38,7 @@ app.add_middleware(
 )
 
 # Include Routers
+app.include_router(accounts.router, prefix=f"{settings.API_V1_STR}/accounts", tags=["Accounts"])
 app.include_router(transactions.router, prefix=settings.API_V1_STR, tags=["Transactions & Chart of Accounts"])
 app.include_router(reports.router, prefix=settings.API_V1_STR, tags=["Financial Reports"])
 app.include_router(audit.router, prefix=settings.API_V1_STR, tags=["Audit & Anomaly Review"])

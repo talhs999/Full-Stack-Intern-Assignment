@@ -1,183 +1,134 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #0F172A;
+  --color-secondary: #10B981;
+  --color-tertiary: #64748B;
+  --color-neutral: #F8FAFC;
+  --color-neutral-dark: #F1F5F9;
+  --font-geist: "Geist", system-ui, sans-serif;
+  --font-inter: "Inter", system-ui, sans-serif;
+}
+
 @layer base {
   :root {
-    --bg-root: #080A0F;
-    --card-bg: rgba(15, 20, 32, 0.70);
-    --card-border: rgba(255, 255, 255, 0.12);
+    --bg-root: #F8FAFC; /* Neutral */
+    --bg-surface: #FFFFFF;
+    --text-main: #0F172A; /* Primary */
+    --text-muted: #64748B; /* Tertiary */
+    --border-subtle: #E2E8F0;
+    --brand-emerald: #10B981; /* Secondary */
+  }
+
+  .dark {
+    --bg-root: #020617;
+    --bg-surface: #0F172A;
     --text-main: #F8FAFC;
     --text-muted: #94A3B8;
-    --accent-cyan: #00F2FE;
-    --accent-blue: #4FACFE;
-    --accent-coral: #FF0844;
-    --accent-gold: #FFD200;
+    --border-subtle: #1E293B;
   }
 
   body {
     background-color: var(--bg-root);
     color: var(--text-main);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-inter);
     overflow-x: hidden;
     min-height: 100vh;
-    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-geist);
+    font-weight: 600;
   }
 }
 
-/* Glassmorphism Classes (Dark Mode Default: Obsidian Black & Silver) */
-.glass-card {
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--card-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Cyber Nuts Card Component */
+.fp-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s ease-in-out;
 }
 
-.glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 12px 40px 0 rgba(0, 242, 254, 0.15);
-  transform: translateY(-2px);
+.fp-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.glass-panel {
-  background: rgba(10, 14, 23, 0.85);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* Gradient Background Mesh */
-.bg-mesh {
-  background-image: 
-    radial-gradient(at 10% 20%, rgba(255, 255, 255, 0.08) 0px, transparent 50%),
-    radial-gradient(at 90% 80%, rgba(0, 242, 254, 0.10) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(79, 172, 254, 0.08) 0px, transparent 60%);
-}
-
-/* --- LIGHT MODE OVERRIDES (Platinum White & Black Glassmorphism) --- */
-body.light-mode {
-  --bg-root: #F1F5F9;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --card-border: rgba(15, 23, 42, 0.15);
-  --text-main: #0F172A;
-  --text-muted: #475569;
-}
-
-body.light-mode .text-white {
-  color: #0F172A !important;
-}
-
-body.light-mode .text-slate-200,
-body.light-mode .text-slate-300 {
-  color: #1E293B !important;
-}
-
-body.light-mode .text-slate-400 {
-  color: #475569 !important;
-}
-
-body.light-mode .text-slate-500 {
-  color: #64748B !important;
-}
-
-body.light-mode .bg-slate-900\/60,
-body.light-mode .bg-slate-900\/50,
-body.light-mode .bg-slate-900\/80,
-body.light-mode .bg-slate-900\/40,
-body.light-mode .bg-slate-950,
-body.light-mode .bg-slate-900 {
-  background-color: rgba(255, 255, 255, 0.75) !important;
-  color: #0F172A !important;
-}
-
-body.light-mode .border-white\/10,
-body.light-mode .border-white\/5,
-body.light-mode .border-white\/20,
-body.light-mode .border-white\/30 {
-  border-color: rgba(15, 23, 42, 0.12) !important;
-}
-
-body.light-mode .glass-panel {
-  background: rgba(255, 255, 255, 0.90) !important;
-  border-color: rgba(15, 23, 42, 0.15) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-body.light-mode .glass-card {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border-color: rgba(15, 23, 42, 0.12) !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-}
-
-body.light-mode .glass-card:hover {
-  border-color: rgba(2, 132, 199, 0.3) !important;
-  box-shadow: 0 12px 35px rgba(2, 132, 199, 0.12) !important;
-}
-
-body.light-mode .bg-mesh {
-  background-image: 
-    radial-gradient(at 10% 20%, rgba(15, 23, 42, 0.05) 0px, transparent 50%),
-    radial-gradient(at 90% 80%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(37, 99, 235, 0.05) 0px, transparent 60%) !important;
-}
-
-body.light-mode input,
-body.light-mode select,
-body.light-mode textarea {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  color: #0F172A !important;
-  border-color: rgba(15, 23, 42, 0.25) !important;
-}
-
-body.light-mode table thead tr {
-  background-color: rgba(241, 245, 249, 0.9) !important;
-}
-
-body.light-mode table tbody tr:hover {
-  background-color: rgba(241, 245, 249, 0.6) !important;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-root);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(150, 150, 150, 0.25);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 242, 254, 0.5);
-}
-
-/* Glow effects & buttons */
-.btn-gradient {
-  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
-  color: #090D16;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
-}
-
-.btn-gradient:hover {
-  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.45);
-  transform: scale(1.02);
-}
-
-.btn-coral {
-  background: linear-gradient(135deg, var(--accent-coral) 0%, #FFB199 100%);
+/* Cyber Nuts Button Styles */
+.btn-primary {
+  background-color: var(--text-main); /* Dark Slate 900 */
   color: #FFFFFF;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 8, 68, 0.25);
+  border-radius: 8px;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  transition: opacity 0.2s ease;
 }
 
-.btn-coral:hover {
-  box-shadow: 0 6px 25px rgba(255, 8, 68, 0.45);
-  transform: scale(1.02);
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background-color: var(--brand-emerald); /* Emerald 500 */
+  color: #FFFFFF;
+  border-radius: 8px;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #059669; /* Emerald 600 */
+}
+
+/* Sidebar Active State */
+.sidebar-link {
+  @apply text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white;
+}
+
+.sidebar-link-active {
+  border-left: 3px solid var(--text-main);
+}
+
+/* Data Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table thead th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+table tbody td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.875rem;
+}
+
+table tbody tr:hover {
+  background-color: #F8FAFC;
+}
+
+/* Status Badges */
+.badge-verified {
+  background-color: #D1FAE5; /* Emerald 100 */
+  color: #065F46; /* Emerald 900 */
+}
+
+.badge-pending {
+  background-color: #F1F5F9; /* Slate 100 */
+  color: #475569; /* Slate 600 */
+}
+
+.badge-flagged {
+  background-color: #FEE2E2; /* Red 100 */
+  color: #991B1B; /* Red 900 */
 }

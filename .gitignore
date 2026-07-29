@@ -33,6 +33,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+frontend/.env.local
+backend/.env
 
 # Database files
 *.db

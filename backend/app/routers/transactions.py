@@ -18,8 +18,11 @@ async def create_transaction_endpoint(
     tx_in: TransactionCreate,
     db: AsyncSession = Depends(get_db)
 ):
-    tx = await crud.create_transaction(db, tx_in, performed_by="USER_UI")
-    return ApiResponse(success=True, data=TransactionResponse.model_validate(tx), message="Transaction created successfully")
+    try:
+        tx = await crud.create_transaction(db, tx_in, performed_by="USER_UI")
+        return ApiResponse(success=True, data=TransactionResponse.model_validate(tx), message="Transaction created successfully")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/transactions", response_model=ApiResponse)
 async def list_transactions_endpoint(
@@ -51,6 +54,13 @@ async def get_transaction_endpoint(id: str, db: AsyncSession = Depends(get_db)):
     if not tx:
         raise HTTPException(status_code=404, detail="Transaction not found")
     return ApiResponse(success=True, data=TransactionResponse.model_validate(tx))
+
+@router.put("/transactions/{id}", response_model=ApiResponse)
+async def update_transaction_endpoint(id: str, tx_in: TransactionUpdate, db: AsyncSession = Depends(get_db)):
+    tx = await crud.update_transaction(db, id, tx_in, performed_by="USER_UI")
+    if not tx:
+        raise HTTPException(status_code=404, detail="Transaction not found or deleted")
+    return ApiResponse(success=True, data=TransactionResponse.model_validate(tx), message="Transaction updated successfully")
 
 @router.delete("/transactions/{id}", response_model=ApiResponse)
 async def delete_transaction_endpoint(id: str, db: AsyncSession = Depends(get_db)):

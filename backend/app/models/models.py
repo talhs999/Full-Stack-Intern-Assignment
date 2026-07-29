@@ -16,6 +16,7 @@ class Account(Base):
     type: Mapped[str] = mapped_column(String(20))  # asset, liability, equity, revenue, expense
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    opening_balance: Mapped[Decimal] = mapped_column(Numeric(15, 2), default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
