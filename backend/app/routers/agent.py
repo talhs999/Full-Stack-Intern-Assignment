@@ -12,5 +12,5 @@ async def chat_with_agent(
     req: ChatRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    chat_res = await process_chat_message(req.message, db, req.conversation_history)
+    chat_res = await process_chat_message(db, req.message, req.conversation_history)
     return ApiResponse(success=True, data=chat_res)
