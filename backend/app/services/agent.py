@@ -94,30 +94,49 @@ async def process_chat_message(
     """
     Processes a natural language chat message using native Gemini function calling.
     """
-    try:
-        if os.environ.get("GOOGLE_API_KEY") == "dummy_key":
+    keys = settings.gemini_keys_list
+    for idx, key in enumerate(keys):
+        try:
+            if key == "dummy_key":
+                return ChatResponse(
+                    reply="Sorry, the Gemini AI is not configured. Please add your GEMINI_API_KEY in the Vercel Environment Variables.",
+                    suggested_actions=[]
+                )
+                
+            from pydantic_ai.models.google import GoogleModel
+            from pydantic_ai.providers.google import GoogleProvider
+            
+            # Dynamically override the model and provider with the current key
+            model = GoogleModel("gemini-2.5-flash", provider=GoogleProvider(api_key=key))
+            
+            result = await agent.run(user_message, deps=db, model=model)
+            
+            tool_used = None
+            if result.all_messages():
+                last_message = result.all_messages()[-1]
+                if getattr(last_message, "tool_calls", None):
+                    tool_used = last_message.tool_calls[-1].tool_name
+                    
             return ChatResponse(
-                reply="Sorry, the Gemini AI is not configured. Please add your GEMINI_API_KEY in the Vercel Environment Variables.",
-                suggested_actions=[]
+                reply=result.data,
+                suggested_actions=[],
+                tool_used=tool_used
             )
             
-        result = await agent.run(user_message, deps=db)
-        
-        tool_used = None
-        structured_data = None
-        
-        for msg in result.all_messages():
-            if hasattr(msg, 'parts'):
-                for part in msg.parts:
-                    if hasattr(part, 'content') and isinstance(part.content, dict):
-                        if "_tool_used" in part.content:
-                            tool_used = part.content["_tool_used"]
-                            structured_data = part.content.get("data")
-                            
-        return ChatResponse(
-            reply=str(result.output),
-            tool_used=tool_used,
-            structured_data=structured_data
-        )
-    except Exception as e:
-        return ChatResponse(reply=f"AI Internal Error: {str(e)}")
+        except Exception as e:
+            err_msg = str(e).lower()
+            if "429" in err_msg or "quota" in err_msg or "timeout" in err_msg or "rate limit" in err_msg:
+                # If this was the last key, return the timeout message
+                if idx == len(keys) - 1:
+                    return ChatResponse(
+                        reply="All available AI quotas have been reached. Taking a short timeout. Please wait a little while and try again.",
+                        suggested_actions=[]
+                    )
+                # Otherwise, loop continues to the next key
+                print(f"Key {idx+1} quota reached. Shifting to next API key...")
+                continue
+            
+            # If it's a different error, return it
+            return ChatResponse(reply=f"AI Internal Error: {str(e)}")
+    
+    return ChatResponse(reply="AI Error: No valid keys available.", suggested_actions=[])

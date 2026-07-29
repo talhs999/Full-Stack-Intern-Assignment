@@ -14,6 +14,15 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
 
+    @property
+    def gemini_keys_list(self) -> list[str]:
+        keys = []
+        if self.GEMINI_API_KEY:
+            keys.extend([k.strip() for k in self.GEMINI_API_KEY.split(",") if k.strip()])
+        if not keys:
+            keys.append("dummy_key")
+        return keys
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 settings = Settings()

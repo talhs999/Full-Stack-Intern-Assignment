@@ -9,12 +9,15 @@ from app.routers import transactions, reports, audit, agent, accounts
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: create tables if not present and seed initial accounts/categories
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    
-    async with AsyncSessionLocal() as db:
-        await seed_initial_data(db)
+    try:
+        # Startup: create tables if not present and seed initial accounts/categories
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        
+        async with AsyncSessionLocal() as db:
+            await seed_initial_data(db)
+    except Exception as e:
+        print(f"Lifespan DB init failed: {e}")
     
     yield
     # Shutdown: dispose engine

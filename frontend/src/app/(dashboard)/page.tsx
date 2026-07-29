@@ -306,9 +306,9 @@ export default function DashboardPage() {
 
         <div className="p-4 border-t border-slate-100 bg-white">
           <div className="flex flex-wrap gap-2 mb-3">
-            <button className="px-3 py-1.5 rounded-full text-[10px] font-medium border border-slate-200 text-slate-600 hover:bg-slate-50">Compare YoY</button>
-            <button className="px-3 py-1.5 rounded-full text-[10px] font-medium border border-slate-200 text-slate-600 hover:bg-slate-50">Tax Summary</button>
-            <button className="px-3 py-1.5 rounded-full text-[10px] font-medium border border-slate-200 text-slate-600 hover:bg-slate-50">Report Ledger</button>
+            <button onClick={() => setInputMsg("Compare YoY")} className="px-3 py-1.5 rounded-full text-[10px] font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Compare YoY</button>
+            <button onClick={() => setInputMsg("Tax Summary")} className="px-3 py-1.5 rounded-full text-[10px] font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Tax Summary</button>
+            <button onClick={() => setInputMsg("Report Ledger")} className="px-3 py-1.5 rounded-full text-[10px] font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Report Ledger</button>
           </div>
           <form 
             onSubmit={(e) => { e.preventDefault(); handleSendAI(); }}
