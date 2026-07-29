@@ -216,6 +216,11 @@ def compute_pnl_from_transactions(transactions: list, period_label: str) -> PnLR
     for t in transactions:
         cat_name = t.category.name if t.category else "Uncategorized"
         cat_color = t.category.color if (t.category and t.category.color) else "#757575"
+        
+        # Skip Equity injections or drawings for PnL
+        if 'equity' in cat_name.lower() or 'capital' in cat_name.lower() or 'draw' in cat_name.lower() or 'dividend' in cat_name.lower() or (t.account and t.account.type == 'equity'):
+            continue
+
         color_map[cat_name] = cat_color
         if t.type == 'income':
             income_map[cat_name] = income_map.get(cat_name, Decimal(0)) + t.amount
@@ -237,7 +242,7 @@ def compute_pnl_from_transactions(transactions: list, period_label: str) -> PnLR
     )
 
 async def generate_pnl(db: AsyncSession, year: int, month: Optional[int] = None) -> PnLResponse:
-    query = select(Transaction).options(selectinload(Transaction.category)).where(
+    query = select(Transaction).options(selectinload(Transaction.category), selectinload(Transaction.account)).where(
         Transaction.is_deleted == False,
         func.extract('year', Transaction.date) == year
     )
@@ -258,6 +263,11 @@ async def generate_pnl(db: AsyncSession, year: int, month: Optional[int] = None)
     for t in txs:
         cat_name = t.category.name if t.category else "Uncategorized"
         cat_color = t.category.color if (t.category and t.category.color) else "#757575"
+        
+        # Skip Equity injections or drawings for PnL
+        if 'equity' in cat_name.lower() or 'capital' in cat_name.lower() or 'draw' in cat_name.lower() or 'dividend' in cat_name.lower() or (t.account and t.account.type == 'equity'):
+            continue
+
         color_map[cat_name] = cat_color
         if t.type == 'income':
             income_map[cat_name] = income_map.get(cat_name, Decimal(0)) + t.amount
@@ -283,22 +293,32 @@ async def generate_balance_sheet(db: AsyncSession, as_of_date: Optional[date] = 
     res = await db.execute(select(Account))
     accounts = res.scalars().all()
 
-    # For MVP, we simulate account balances from transactions or default equity/assets
-    # In a full double-entry ledger, balance is sum of debits/credits. Here we aggregate by account_id
-    tx_res = await db.execute(select(Transaction).options(selectinload(Transaction.account)).where(Transaction.is_deleted == False, Transaction.date <= target_date))
+    # Get all transactions up to the target date
+    tx_res = await db.execute(select(Transaction).options(selectinload(Transaction.account), selectinload(Transaction.category)).where(Transaction.is_deleted == False, Transaction.date <= target_date))
     txs = tx_res.scalars().all()
 
     acc_balances: Dict[str, Decimal] = {}
     for acc in accounts:
         acc_balances[acc.name] = acc.opening_balance
 
+    # Calculate Retained Earnings from PnL (Historical Net Income)
+    retained_earnings = Decimal(0)
+
     for t in txs:
         acc_name = t.account.name if t.account else "Cash"
-        # simple cashbook logic for MVP: income adds to asset/bank, expense subtracts
+        cat_name = t.category.name.lower() if t.category else ""
+        
+        # Single-entry logic: affect the selected account
         if t.type == 'income':
             acc_balances[acc_name] = acc_balances.get(acc_name, Decimal(0)) + t.amount
+            # If it's standard income (not equity injection), it adds to Retained Earnings
+            if 'equity' not in cat_name and 'capital' not in cat_name and (not t.account or t.account.type != 'equity'):
+                retained_earnings += t.amount
         else:
             acc_balances[acc_name] = acc_balances.get(acc_name, Decimal(0)) - t.amount
+            # If it's standard expense (not equity draw), it subtracts from Retained Earnings
+            if 'equity' not in cat_name and 'draw' not in cat_name and 'dividend' not in cat_name and (not t.account or t.account.type != 'equity'):
+                retained_earnings -= t.amount
 
     assets = []
     liabilities = []
@@ -311,23 +331,19 @@ async def generate_balance_sheet(db: AsyncSession, as_of_date: Optional[date] = 
         if acc.type == 'asset':
             assets.append(BalanceSheetItem(account=acc.name, balance=bal, warning=warning))
         elif acc.type == 'liability':
+            # Liabilities are usually represented as positive numbers in BS presentation
             liabilities.append(BalanceSheetItem(account=acc.name, balance=bal, warning=warning))
         else:
             equities.append(BalanceSheetItem(account=acc.name, balance=bal, warning=warning))
 
+    # Add calculated Retained Earnings to the Equity section
+    equities.append(BalanceSheetItem(account="Retained Earnings", balance=retained_earnings))
+
     tot_assets = sum(i.balance for i in assets)
+    # Ensure liabilities and equities balances are treated correctly for the equation (Assets = Liabilities + Equity)
+    # If a liability account has a positive balance mathematically in our single-entry, we assume it means we OWE it (Credit balance)
     tot_liab = sum(i.balance for i in liabilities)
-    
-    # Compute Retained Earnings (Equity) to balance the equation
-    tot_eq = tot_assets - tot_liab
-    
-    # In this MVP cashbook, we just put all computed equity under the first equity account, or create a generic one
-    if equities:
-        equities[0].balance = tot_eq
-        for eq in equities[1:]:
-            eq.balance = Decimal(0)
-    else:
-        equities.append(BalanceSheetItem(account="Retained Earnings", balance=tot_eq))
+    tot_eq = sum(i.balance for i in equities)
 
     # Genuinely compute if balanced
     is_balanced = (tot_assets == tot_liab + tot_eq)
