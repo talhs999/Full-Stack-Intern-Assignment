@@ -118,7 +118,7 @@ async def process_chat_message(
                     tool_used = last_message.tool_calls[-1].tool_name
                     
             return ChatResponse(
-                reply=result.data,
+                reply=str(result.output),
                 suggested_actions=[],
                 tool_used=tool_used
             )
